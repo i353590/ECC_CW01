@@ -10,7 +10,9 @@ module.exports = async srv => {
 
   bupaSrv.on("BusinessPartner/Created", async msg => {
     console.log("<< event caught", msg);
-    const BUSINESSPARTNER = (+(data.objectId)).toString();
+    const data = JSON.parse(msg.data);
+    // const BUSINESSPARTNER = (+(data.objectId)).toString();
+    const BUSINESSPARTNER = data.objectId;
     // ID has prefix 000 needs to be removed to read address
     console.log(BUSINESSPARTNER);
     if(data.event === "CREATED"){
@@ -28,7 +30,9 @@ module.exports = async srv => {
 
   bupaSrv.on("BusinessPartner/Changed", async msg => {
     console.log("<< event caught", msg);
-    const BUSINESSPARTNER = (+(data.objectId)).toString();
+    const data = JSON.parse(msg.data);
+    // const BUSINESSPARTNER = (+(data.objectId)).toString();
+    const BUSINESSPARTNER = data.objectId;
     if(data.event === "CHANGED"){
       const bpIsAlive = await cds.tx(msg).run(SELECT.one(Notifications, (n) => n.verificationStatus_code).where({businessPartnerId: BUSINESSPARTNER}));
       if(bpIsAlive.verificationStatus_code == "P"){

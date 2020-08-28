@@ -42,7 +42,7 @@
         "model": "srv/external/API_BUSINESS_PARTNER",
         "[production]": {
           "credentials": {
-            "destination": "ecc-ext",
+            "destination": "bupa",
             "requestTimeout": 18000000,
             "prefix": "refappscf/ecc/123/BO"
           }

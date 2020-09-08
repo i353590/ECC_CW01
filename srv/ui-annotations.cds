@@ -74,8 +74,14 @@ annotate my.Notifications with @(
 annotate my.Notifications @(
     Capabilities: {
         Insertable : false,
-        Deletable : false,
+        Deletable : true,
         Updatable : true,
+});
+
+annotate my.Addresses @(
+    Capabilities: {
+        Deletable : false,
+        Insertable : false,
 });
 
 annotate my.Notifications with {

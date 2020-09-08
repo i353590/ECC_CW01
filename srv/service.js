@@ -35,8 +35,8 @@ module.exports = async srv => {
     const BUSINESSPARTNER = data.objectId;
     if(data.event === "CHANGED"){
       const bpIsAlive = await cds.tx(msg).run(SELECT.one(Notifications, (n) => n.verificationStatus_code).where({businessPartnerId: BUSINESSPARTNER}));
-      if(bpIsAlive.verificationStatus_code == "P"){
-        const bpMarkVerified= await cds.tx(msg).run(UPDATE(Notifications).where({businessPartnerId: BUSINESSPARTNER}).set({verificationStatus_code:"V"}));
+      if(bpIsAlive.verificationStatus_code == "V"){
+        const bpMarkVerified= await cds.tx(msg).run(UPDATE(Notifications).where({businessPartnerId: BUSINESSPARTNER}).set({verificationStatus_code:"C"}));
       }    
       console.log("<< BP marked verified >>")
     }
@@ -44,13 +44,13 @@ module.exports = async srv => {
 
   srv.after("UPDATE", "Notifications", data => {
     console.log("Notification update", data.businessPartnerId);
-    if(data.verificationStatus_code === "P" || data.verificationStatus_code === "INV")
+    if(data.verificationStatus_code === "V" || data.verificationStatus_code === "INV")
     emitEvent(data);
   });
 
   srv.before("SAVE", "Notifications", req => {
     if(req.data.verificationStatus_code == "V"){
-      req.error({code: '400', message: "Cannot mark as VERIFIED. Please change to PROCESS", numericSeverity:2, target: 'verificationStatus_code'});
+      req.error({code: '400', message: "Cannot mark as COMPLETED. Please change to VERIFIED", numericSeverity:2, target: 'verificationStatus_code'});
     }
   });
 

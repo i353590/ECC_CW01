@@ -49,7 +49,7 @@ module.exports = async srv => {
   });
 
   srv.before("SAVE", "Notifications", req => {
-    if(req.data.verificationStatus_code == "V"){
+    if(req.data.verificationStatus_code == "C"){
       req.error({code: '400', message: "Cannot mark as COMPLETED. Please change to VERIFIED", numericSeverity:2, target: 'verificationStatus_code'});
     }
   });

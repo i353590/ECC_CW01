@@ -1,14 +1,15 @@
 
-
 module.exports = async srv => {
   const {BusinessPartnerAddress, Notifications, Addresses, BusinessPartner} = srv.entities;
   const bupaSrv = await cds.connect.to("API_BUSINESS_PARTNER");
+  const messaging = await cds.connect.to('messaging')
+  const namespace = messaging.options.credentials && messaging.options.credentials.namespace
   const {postcodeValidator} = require('postcode-validator');
   
   srv.on("READ", BusinessPartnerAddress, req => bupaSrv.tx(req).run(req.query))
   srv.on("READ", BusinessPartner, req => bupaSrv.tx(req).run(req.query))
 
-  bupaSrv.on("BusinessPartner/Created", async msg => {
+  messaging.on("refappscf/ecc/123/BO/BusinessPartner/Created", async msg => {
     console.log("<< event caught", msg);
     const data = JSON.parse(msg.data);
     // const BUSINESSPARTNER = (+(data.objectId)).toString();
@@ -17,6 +18,7 @@ module.exports = async srv => {
     console.log(BUSINESSPARTNER);
     if(data.event === "CREATED"){
       const bpEntity = await bupaSrv.tx(msg).run(SELECT.one(BusinessPartner).where({businessPartnerId: BUSINESSPARTNER}));
+      console.log("bpEntityyy", bpEntity);
       const result = await cds.tx(msg).run(INSERT.into(Notifications).entries({businessPartnerId:BUSINESSPARTNER, verificationStatus_code:'N', businessPartnerName:bpEntity.businessPartnerName}));
       const address = await bupaSrv.tx(msg).run(SELECT.one(BusinessPartnerAddress).where({businessPartnerId: BUSINESSPARTNER}));
       // for the address to notification association - extra field
@@ -28,7 +30,7 @@ module.exports = async srv => {
   });
 
 
-  bupaSrv.on("BusinessPartner/Changed", async msg => {
+  messaging.on("refappscf/ecc/123/BO/BusinessPartner/Changed", async msg => {
     console.log("<< event caught", msg);
     const data = JSON.parse(msg.data);
     // const BUSINESSPARTNER = (+(data.objectId)).toString();
@@ -42,10 +44,10 @@ module.exports = async srv => {
     }
   });
 
-  srv.after("UPDATE", "Notifications", data => {
+  srv.after("UPDATE", "Notifications", (data, req) => {
     console.log("Notification update", data.businessPartnerId);
     if(data.verificationStatus_code === "V" || data.verificationStatus_code === "INV")
-    emitEvent(data);
+    emitEvent(data, req);
   });
 
   srv.before("SAVE", "Notifications", req => {
@@ -67,7 +69,7 @@ module.exports = async srv => {
     return req.info({numericSeverity:1, target: 'postalCode'});  
   });
 
-  function emitEvent(result){
+  function emitEvent(result, req){
     // const result =  await cds.run(SELECT.one.from("my.businessPartnerValidation.Notification as N").leftJoin("my.businessPartnerValidation.Address as A").on({"N.businessPartnerId":"A.businessPartnerId"}).where("N.businessPartnerId", bp));
     const statusValues={"N":"NEW", "P":"PROCESS", "INV":"INVALID", "V":"VERIFIED"}
     // Format JSON as per serverless requires
@@ -84,7 +86,7 @@ module.exports = async srv => {
     
     console.log("<< data to serverless >>>", result);
     console.log("<< formatted >>>>>", payload);
-    srv.emit("BusinessPartnerVerified", payload);
+    messaging.tx(req).emit(`${namespace}/SalesService/d41d/BusinessPartnerVerified`, payload)
   }
 
   

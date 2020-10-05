@@ -105,7 +105,7 @@ update values.yaml file with the below values
   xfsrt-cli faas service list
   ```
 - Update the Name of the destination under secret-values -> destinationname -> name -> name 
-- Also update attachmentSrvApi as ZAPI_BUSINESS_PARTNER_SRV, businessPartnerSrvApi as ZAPI_CV_ATTACHMENT_SRV businessObjectTypeName as BUS1006 under secret-values -> destinationname -> name -> name
+- Also update businessPartnerSrvApi as ZAPI_BUSINESS_PARTNER_SRV, attachmentSrvApi as ZAPI_CV_ATTACHMENT_SRV businessObjectTypeName as BUS1006 under secret-values -> destinationname -> name -> name
 Update the Enterprise messaging queue name under config-values-section -> amqp-service-config -> amqp -> incoming -> inp1 -> sourceAddress appended with "queue:"
 
 And finally run the below command inside the project directory to deploy the project

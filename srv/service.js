@@ -11,7 +11,7 @@ module.exports = async srv => {
 
   messaging.on("refappscf/ecc/123/BO/BusinessPartner/Created", async msg => {
     console.log("<< event caught", msg);
-    const data = msg.data;
+    const data = JSON.parse(msg.data);
     const BUSINESSPARTNER = data.objectId;
     console.log(BUSINESSPARTNER);
     if(data.event === "CREATED"){
@@ -30,7 +30,7 @@ module.exports = async srv => {
 
   messaging.on("refappscf/ecc/123/BO/BusinessPartner/Changed", async msg => {
     console.log("<< event caught", msg);
-    const data = msg.data;
+    const data = JSON.parse(msg.data);
     const BUSINESSPARTNER = data.objectId;
     if(data.event === "CHANGED"){
       const bpIsAlive = await cds.tx(msg).run(SELECT.one(Notifications, (n) => n.verificationStatus_code).where({businessPartnerId: BUSINESSPARTNER}));

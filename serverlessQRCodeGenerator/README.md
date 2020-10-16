@@ -5,7 +5,7 @@ This serverless function created as a utility is used by the to generate a QR Co
 This implementation showcases: 
   - [SAP Cloud Platform Extension Factory Serverless Runtime](https://help.sap.com/viewer/bf7b2ff68518427c85b30ac3184ad215/Cloud/en-US/7b8cc2b0e8d141d6aa37c7dff4d70b82.html):
   - AMQP trigger for invoking the serverless function
-  - oData Provisioning for registering the S4HANA oData Services(API_BUSINESS_PARTNER and API_CV_ATTACHMENT_SERVICE)
+  - oData Provisioning for registering the S4HANA oData Services(ZAPI_BUSINESS_PARTNER_SRV and ZAPI_CV_ATTACHMENT_SRV)
   - Consumption of the registered S4 HANA oData services from a serverless function
 
 ## Enable IWBEP component in the S4HANA system

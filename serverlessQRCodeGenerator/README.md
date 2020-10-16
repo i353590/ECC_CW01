@@ -26,8 +26,8 @@ This implementation showcases:
  odc: true
 2. Login to Extension Center
 3. Services -> Register 
-4. Register API_BUSINESS_PARTNER  and API_CV_ATTACHMENT_SRV services 
-5. Click on the service API_BUSINESS_PARTNER and copy the service url till SAP eg., https://xxx.xxxx.services.xfs.cloud.sap/odata/SAP/
+4. Register ZAPI_BUSINESS_PARTNER_SRV  and ZAPI_CV_ATTACHMENT_SRV services 
+5. Click on the service ZAPI_BUSINESS_PARTNER_SRV and copy the service url till SAP eg., https://xxx.xxxx.services.xfs.cloud.sap/odata/SAP/
 
 ## Deployment - Business Application Studio
 
@@ -91,7 +91,7 @@ First, create a deployment file to provide credentials. Run inside the project d
 faas-sdk init-values -y values.yaml
 ```
 
-Login to cockpit and create a destination
+Login to cockpit and create a destination RegisteredoData
  1. url : using service url from registered odata service
  2. Type: HTTP
  3. Authentication: oAuth2ClientCredentials
@@ -104,7 +104,7 @@ update values.yaml file with the below values
   ```bash
   xfsrt-cli faas service list
   ```
-- Update the Name of the destination under secret-values -> destinationname -> name -> name 
+- Update the Name of the destination(RegisteredoData) under secret-values -> destinationname -> name -> name 
 - Also update businessPartnerSrvApi as ZAPI_BUSINESS_PARTNER_SRV, attachmentSrvApi as ZAPI_CV_ATTACHMENT_SRV businessObjectTypeName as BUS1006 under secret-values -> destinationname -> name -> name
 Update the Enterprise messaging queue name under config-values-section -> amqp-service-config -> amqp -> incoming -> inp1 -> sourceAddress appended with "queue:"
 

@@ -81,7 +81,7 @@ async function fetchXsrfToken(destinationConfiguration, accessToken, bpDetails, 
 async function updateBpAddress(destinationConfiguration, accessToken, headers, bpDetails, destinationNameFromContext) {
         const businessPartnerSrvApi = destinationNameFromContext.businessPartnerSrvApi;
         return await axios({
-            method: 'patch',
+            method: 'put',
             url: destinationConfiguration.URL + businessPartnerSrvApi +"/A_BusinessPartnerAddress(BusinessPartner='" + bpDetails.businessPartner + "',AddressID='" + bpDetails.addressId + "')",
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
@@ -104,7 +104,7 @@ async function updateBpAddress(destinationConfiguration, accessToken, headers, b
 async function updateBp(destinationConfiguration, accessToken, headers, bpDetails, destinationNameFromContext) {
     const businessPartnerSrvApi = destinationNameFromContext.businessPartnerSrvApi;
        return await axios({
-            method: 'patch',
+            method: 'put',
             url: destinationConfiguration.URL + businessPartnerSrvApi + "/A_BusinessPartner('" + bpDetails.businessPartner + "')",
             headers: {
                 'Authorization': `Bearer ${accessToken}`,

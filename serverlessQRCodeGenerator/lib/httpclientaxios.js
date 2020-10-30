@@ -30,7 +30,7 @@ async function processBpPayload(accessToken, destinationConfiguration, msg, dest
         }
         try{
             const headers = await fetchXsrfToken(destinationConfiguration, accessToken, bpDetails, destinationNameFromContext);
-            if (bpDetails.addressModified) {
+            if (bpDetails.addressModified && bpDetails.addressModified != undefined) {
                 await updateBpAddress(destinationConfiguration, accessToken, headers, bpDetails, destinationNameFromContext);
                 await updateBp(destinationConfiguration, accessToken, headers, bpDetails, destinationNameFromContext);
                 if(!bpDetails.businessPartnerIsBlocked){
@@ -40,14 +40,14 @@ async function processBpPayload(accessToken, destinationConfiguration, msg, dest
                 return "SUCCESS"; 
             } else {
                 await updateBp(destinationConfiguration, accessToken, headers, bpDetails, destinationNameFromContext);
-                if(!bpDetails.businessPartnerIsBlocked){
+                if(!bpDetails.businessPartnerIsBlocked && bpDetails.addressId != undefined){
                     await postGeneratedImage(destinationConfiguration, accessToken, headers, bpDetails, destinationNameFromContext);
                     return "SUCCESS";
                 }
                 return "SUCCESS";
             }
         }catch(error){
-            logger.info("error", error.message);
+            logger.info("error");
             return error;
         }
 }
@@ -73,7 +73,7 @@ async function fetchXsrfToken(destinationConfiguration, accessToken, bpDetails, 
                 logger.info("Success - Fetching CSRF Token : ");
                 return headers;
         }).catch(error => {
-            logger.info("Error - Fetching CSRF token Error", error);
+            logger.info("Error - Fetching CSRF token Error");
             throw util.errorHandler(error, logger);
         });
 }
@@ -81,7 +81,7 @@ async function fetchXsrfToken(destinationConfiguration, accessToken, bpDetails, 
 async function updateBpAddress(destinationConfiguration, accessToken, headers, bpDetails, destinationNameFromContext) {
         const businessPartnerSrvApi = destinationNameFromContext.businessPartnerSrvApi;
         return await axios({
-            method: 'patch',
+            method: 'put',
             url: destinationConfiguration.URL + businessPartnerSrvApi +"/A_BusinessPartnerAddress(BusinessPartner='" + bpDetails.businessPartner + "',AddressID='" + bpDetails.addressId + "')",
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
@@ -104,7 +104,7 @@ async function updateBpAddress(destinationConfiguration, accessToken, headers, b
 async function updateBp(destinationConfiguration, accessToken, headers, bpDetails, destinationNameFromContext) {
     const businessPartnerSrvApi = destinationNameFromContext.businessPartnerSrvApi;
        return await axios({
-            method: 'patch',
+            method: 'put',
             url: destinationConfiguration.URL + businessPartnerSrvApi + "/A_BusinessPartner('" + bpDetails.businessPartner + "')",
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
@@ -137,19 +137,20 @@ async function postGeneratedImage(destinationConfiguration, accessToken, headers
                         'Content-Type': 'Image/jpg',
                         'Slug': bp + '.jpg',
                         'BusinessObjectTypeName': businessObjectTypeName,
-                        'LinkedSAPObjectKey': bp,
+                        'LinkedSAPObjectKey': bp.padStart(10,0),
                         'x-csrf-token': headers.token,
                         'Cookie': headers.cookie
                     },
                     data: image,
                 }).then(response =>{
+                    console.log("success image");
                     logger.info("SUCCESS - Uploading Image");
                 }).catch(error => {
-                    logger.info("ERROR - Uploading Image" + error);
+                    logger.info("ERROR - Uploading Image");
                     throw util.errorHandler(error, logger);
                 });
             }).catch(error => {
-                logger.info("ERROR - uploading image" + error);
+                logger.info("ERROR - uploading image");
                 throw error;
             });
 }
@@ -179,7 +180,7 @@ function generateQRCode(bpDetails){
         });
 
         stream.on("error", error => {
-            logger.info("ERROR - QR Code generation", error);
+            logger.info("ERROR - QR Code generation");
             reject(new Error("ERROR - Generating QR Code"));
         });
     });

@@ -5,7 +5,7 @@ This serverless function created as a utility is used by the to generate a QR Co
 This implementation showcases: 
   - [SAP Cloud Platform Extension Factory Serverless Runtime](https://help.sap.com/viewer/bf7b2ff68518427c85b30ac3184ad215/Cloud/en-US/7b8cc2b0e8d141d6aa37c7dff4d70b82.html):
   - AMQP trigger for invoking the serverless function
-  - oData Provisioning for registering the S4HANA oData Services(API_BUSINESS_PARTNER and API_CV_ATTACHMENT_SERVICE)
+  - oData Provisioning for registering the S4HANA oData Services(ZAPI_BUSINESS_PARTNER_SRV and ZAPI_CV_ATTACHMENT_SRV)
   - Consumption of the registered S4 HANA oData services from a serverless function
 
 ## Enable IWBEP component in the S4HANA system
@@ -26,8 +26,8 @@ This implementation showcases:
  odc: true
 2. Login to Extension Center
 3. Services -> Register 
-4. Register API_BUSINESS_PARTNER  and API_CV_ATTACHMENT_SRV services 
-5. Click on the service API_BUSINESS_PARTNER and copy the service url till SAP eg., https://xxx.xxxx.services.xfs.cloud.sap/odata/SAP/
+4. Register ZAPI_BUSINESS_PARTNER_SRV  and ZAPI_CV_ATTACHMENT_SRV services 
+5. Click on the service ZAPI_BUSINESS_PARTNER_SRV and copy the service url till SAP eg., https://xxx.xxxx.services.xfs.cloud.sap/odata/SAP/
 
 ## Deployment - Business Application Studio
 
@@ -91,7 +91,7 @@ First, create a deployment file to provide credentials. Run inside the project d
 faas-sdk init-values -y values.yaml
 ```
 
-Login to cockpit and create a destination
+Login to cockpit and create a destination RegisteredoData
  1. url : using service url from registered odata service
  2. Type: HTTP
  3. Authentication: oAuth2ClientCredentials
@@ -104,7 +104,7 @@ update values.yaml file with the below values
   ```bash
   xfsrt-cli faas service list
   ```
-- Update the Name of the destination under secret-values -> destinationname -> name -> name 
+- Update the Name of the destination(RegisteredoData) under secret-values -> destinationname -> name -> name 
 - Also update businessPartnerSrvApi as ZAPI_BUSINESS_PARTNER_SRV, attachmentSrvApi as ZAPI_CV_ATTACHMENT_SRV businessObjectTypeName as BUS1006 under secret-values -> destinationname -> name -> name
 Update the Enterprise messaging queue name under config-values-section -> amqp-service-config -> amqp -> incoming -> inp1 -> sourceAddress appended with "queue:"
 

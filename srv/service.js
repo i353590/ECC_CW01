@@ -17,10 +17,10 @@ module.exports = async srv => {
     if(data.event === "CREATED"){
       const bpEntity = await bupaSrv.tx(msg).run(SELECT.one(BusinessPartner).where({businessPartnerId: BUSINESSPARTNER}));
       console.log("bpEntityyy", bpEntity);
-      const result = await cds.tx(msg).run(INSERT.into(Notifications).entries({businessPartnerId:BUSINESSPARTNER, verificationStatus_code:'N', businessPartnerName:bpEntity.businessPartnerName}));
-      const address = await bupaSrv.tx(msg).run(SELECT.one(BusinessPartnerAddress).where({businessPartnerId: BUSINESSPARTNER}));
+      const result = await cds.tx(msg).run(INSERT.into(Notifications).entries({businessPartnerId:bpEntity.businessPartnerId, verificationStatus_code:'N', businessPartnerName:bpEntity.businessPartnerName}));
+      const address = await bupaSrv.tx(msg).run(SELECT.one(BusinessPartnerAddress).where({businessPartnerId: bpEntity.businessPartnerId}));
       // for the address to notification association - extra field
-      const notificationObj = await cds.tx(msg).run(SELECT.one(Notifications).columns("ID").where({businessPartnerId: BUSINESSPARTNER}));
+      const notificationObj = await cds.tx(msg).run(SELECT.one(Notifications).columns("ID").where({businessPartnerId: bpEntity.businessPartnerId}));
       address.notifications_id=notificationObj.ID;
       const res = await cds.tx(msg).run(INSERT.into(Addresses).entries(address));
       console.log("Address inserted", result);

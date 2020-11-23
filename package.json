@@ -26,6 +26,12 @@
   "cds": {
     "--hana" : { "deploy-format": "hdbtable" },
     "requires": {
+      "messaging": {
+        "kind": "local-messaging",
+        "[production]": {
+          "kind": "enterprise-messaging"
+        }
+      },
       "[production]": {
         "db": {
           "kind": "hana",
@@ -33,9 +39,6 @@
             "db",
             "srv"
           ]
-        },
-        "messaging": {
-          "kind": "enterprise-messaging"
         }
       },
       "API_BUSINESS_PARTNER": {

@@ -65,7 +65,6 @@ The application requires below set of SAP Cloud Platform Entitelements/Quota
 | SAP HANA Schemas & HDI Containers | hdi-shared |          1          |
 | SAP Hana Service                  | 64standard |          1          |
 | Application Runtime               |            |          3          |
-| Extension Factory Runtime         |            |          1          |
 
 
 ### Project Structure
@@ -104,9 +103,6 @@ File / Folder | Purpose
 	Navigate to mta_archives folder and run the below command from CLI
 
    `cf deploy BusinessPartnerValidation_1.0.0.mtar`
-
-## Serverless application
-- Steps to deploy the serverless application can be found here https://github.tools.sap/refapps/RefappBpAggregator#deployment
 
 ## Known Issues
 

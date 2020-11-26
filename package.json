@@ -13,7 +13,9 @@
     "express": "^4",
     "grunt": "^1.1.0",
     "passport": "^0.4.1",
-    "postcode-validator": "^3.1.0"
+    "postcode-validator": "^3.1.0",
+    "@sap-cloud-sdk/core": "^1.31.0",
+    "@sap/cloud-sdk-vdm-business-partner-service": "^1.23.0"
   },
   "scripts": {
     "start": "npx cds run",
@@ -24,7 +26,9 @@
     "jest": "*"
   },
   "cds": {
-    "--hana" : { "deploy-format": "hdbtable" },
+    "--hana": {
+      "deploy-format": "hdbtable"
+    },
     "requires": {
       "messaging": {
         "kind": "local-messaging",
@@ -46,7 +50,7 @@
         "model": "srv/external/API_BUSINESS_PARTNER",
         "[production]": {
           "credentials": {
-            "destination": "bupa",
+            "destination": "bupa-ecc",
             "requestTimeout": 18000000
           }
         }

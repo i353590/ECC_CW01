@@ -5,6 +5,7 @@ module.exports = async srv => {
   const messaging = await cds.connect.to('messaging')
   const namespace = messaging.options.credentials && messaging.options.credentials.namespace
   const {postcodeValidator} = require('postcode-validator');
+  const {BusinessPartner: sdkBusinessPartner, BusinessPartnerAddress: sdkBusinessPartnerAddress}  = require('@sap/cloud-sdk-vdm-business-partner-service');
   
   srv.on("READ", BusinessPartnerAddress, req => bupaSrv.tx(req).run(req.query))
   srv.on("READ", BusinessPartner, req => bupaSrv.tx(req).run(req.query))
@@ -31,10 +32,10 @@ module.exports = async srv => {
   messaging.on("refappscf/ecc/123/BO/BusinessPartner/Changed", async msg => {
     console.log("<< event caught", msg);
     const data = JSON.parse(msg.data);
-    const BUSINESSPARTNER = data.objectId;
+    const BUSINESSPARTNER = (+data.objectId).toString();
     if(data.event === "CHANGED"){
       const bpIsAlive = await cds.tx(msg).run(SELECT.one(Notifications, (n) => n.verificationStatus_code).where({businessPartnerId: BUSINESSPARTNER}));
-      if(bpIsAlive.verificationStatus_code == "V"){
+      if(bpIsAlive && bpIsAlive.verificationStatus_code == "V"){
         const bpMarkVerified= await cds.tx(msg).run(UPDATE(Notifications).where({businessPartnerId: BUSINESSPARTNER}).set({verificationStatus_code:"C"}));
       }    
       console.log("<< BP marked verified >>")
@@ -69,19 +70,32 @@ module.exports = async srv => {
   async function emitEvent(result, req){
     const resultJoin =  await cds.tx(req).run(SELECT.one("my.businessPartnerValidation.Notifications as N").leftJoin("my.businessPartnerValidation.Addresses as A").on("N.businessPartnerId = A.businessPartnerId").where({"N.ID": result.ID}));
     const statusValues={"N":"NEW", "P":"PROCESS", "INV":"INVALID", "V":"VERIFIED"}
-    // Format JSON as per serverless requires
-    const payload = {
-      "businessPartner": resultJoin.businessPartnerId,
-      "businessPartnerName": resultJoin.businessPartnerName,
-      "verificationStatus": statusValues[resultJoin.verificationStatus_code],
-      "addressId":  resultJoin.addressId,
-      "streetName":  resultJoin.streetName,
-      "postalCode":  resultJoin.postalCode,
-      "country":  resultJoin.country,
-      "addressModified":  resultJoin.isModified
+
+    if(resultJoin.isModified){
+      let payload = {
+        streetName: resultJoin.streetName,
+        postalCode: resultJoin.postalCode
+      }
+      let payloadBuilder = sdkBusinessPartnerAddress.builder().fromJson(payload);
+      payloadBuilder.businessPartner = resultJoin.businessPartnerId;
+      payloadBuilder.addressId = resultJoin.addressId
+
+      let res = await sdkBusinessPartnerAddress.requestBuilder().update(payloadBuilder).withCustomServicePath("/").execute({
+        destinationName: 'bupa-ecc'
+      });
+      console.log("address update to ECC", res);
     }
-    console.log("<< formatted >>>>>", payload);
-    messaging.tx(req).emit(`${namespace}/SalesService/d41d/BusinessPartnerVerified`, payload)
+
+    let payload = {
+      "searchTerm1": statusValues[resultJoin.verificationStatus_code],
+      "businessPartnerIsBlocked": (resultJoin.verificationStatus_code == "V")?false:true
+    }
+    let payloadBuilder = sdkBusinessPartner.builder().fromJson(payload);
+    payloadBuilder.businessPartner = resultJoin.businessPartnerId;
+    let res = await sdkBusinessPartner.requestBuilder().update(payloadBuilder).withCustomServicePath("/").execute({
+      destinationName: 'bupa-ecc'
+    });
+    console.log("Search Term update", res);
   }
 
   

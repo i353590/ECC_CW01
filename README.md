@@ -76,20 +76,6 @@ File / Folder | Purpose
 `package.json` | project metadata and configuration
 `readme.md` | this getting started guide
 
-
-
-### Step 1: Setup Cloud platform subaccount
-
-You can use [SAP Cloud Platform - Boosters](https://help.sap.com/viewer/DRAFT/65de2977205c403bbc107264b8eccf4b/Validation/en-US/fb1b56148f834749a2bf51127421610b.html) to setup the subaccount. Boosters Will create the subaccount with the required entitlements, subscriptions and assign the required roles to your user to run this application. Steps to run the booster are provided in [link](https://github.com/SAP-samples/cloud-extension-s4hana-business-process/blob/mission/mission/Prepare-Cloud-Platform/Booster.md). You can create subaccount manually also following [link](https://github.com/SAP-samples/cloud-extension-s4hana-business-process/blob/mission/mission/Prepare-Cloud-Platform/README.md)
-
-### Step 2: Create OData service in SAP ECC
-
-### Step 3: Enable OData Service for business partner in SAP ECC
-
-### Step 4: Setup connectivity between SAP ECC system, SAP CP
-
-### Step 5: Build and deploy the CAP application
-
 #### Steps to deploy locally
 
 - Open terminal in VSCode
@@ -113,9 +99,6 @@ You can use [SAP Cloud Platform - Boosters](https://help.sap.com/viewer/DRAFT/65
 	Navigate to mta_archives folder and run the below command from CLI
 
    `cf deploy BusinessPartnerValidation_1.0.0.mtar`
-
-### Step 6: Configure event based communication between SAP ECC and enterprise messaging
-
 
 ## Demo script
 

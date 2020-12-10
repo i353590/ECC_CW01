@@ -60,7 +60,7 @@ The application requires below set of SAP Cloud Platform Entitlements/Quota
 |-----------------------------------|------------|:-------------------:|
 | Enterprise Messaging              | default    |          1          |
 | SAP HANA Schemas & HDI Containers | hdi-shared |          1          |
-| SAP Hana Service                  | 64standard |          1          |
+| SAP HANA Cloud                    | hana       |          1          |
 | Application Runtime               |            |          3          |
 
 
@@ -112,7 +112,7 @@ File / Folder | Purpose
 
 ![fiori tile](./documentation/images/fioriLaunchpad.JPG)
 
-5. The list of BusinessPartners along with their verification status gets displayed. 
+5. The list of Business Partners along with their verification status gets displayed. 
 
 ![BP list](./documentation/images/BPListView.JPG)
 
